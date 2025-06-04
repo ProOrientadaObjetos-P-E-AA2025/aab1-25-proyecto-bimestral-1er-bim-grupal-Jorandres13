@@ -1,8 +1,7 @@
 
-public class BarrioManager {
-
+public class Paradas {
     public static String[] inicializarBarrios() {
-        return new String[]{
+        return new String[] {
             "Agencia Banco de Loja", "Av. 8 de Diciembre", "Av. Eloy Alfaro", "Av. Kigman",
             "Cabo Minacho", "Calasanz", "Casa de Enfermeros Terminales", "Ciudad Alegria",
             "Clinica Natali", "Colegio Beatriz Cueva de Ayora", "Coliseo Ciudad de Loja",
@@ -21,3 +20,6 @@ public class BarrioManager {
         }
     }
 }
+
+    
+
