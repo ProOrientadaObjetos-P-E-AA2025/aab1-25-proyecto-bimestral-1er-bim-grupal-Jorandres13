@@ -1,108 +1,142 @@
 
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        Scanner tcl = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Ruta> rutasEntrada = new ArrayList<>();
 
-        ArrayList<Ruta> rutas = new ArrayList<>();
-        rutas.add(new Ruta("Agencia Banco de Loja", "Av. 8 de Diciembre", "Cabo Minacho", "Calasanz", "Hipervalle"));
-        rutas.add(new Ruta("Av. Eloy Alfaro", "Colegio Beatriz Cueva de Ayora", "Clinica Natali", "Rosales", "Parque Polideportivo"));
-        rutas.add(new Ruta("Av. Kigman", "Sauces Norte", "Urna", "Tebaida Baja", "Zona Militar"));
-        rutas.add(new Ruta("Ciudad Alegria", "Tnte. Geovany Calle", "Parque Infantil", "Los Cocos", "Redondel del Soldado"));
-        rutas.add(new Ruta("Casa de Enfermeros Terminales", "Coliseo Ciudad de Loja", "Parqueadero Polideportivo", "Predesur", "Lauro Guerrero"));
-        rutas.add(new Ruta("Jose A. Eguiguren", "Iglesia Verbo", "Mercadillo", "Pradera", "Migas"));
-        rutas.add(new Ruta("Estadio", "La Salle", "Las Pitas", "Hotel La Castellana", "Puerta de la Ciudad"));
-        rutas.add(new Ruta("Terminal Terrestre", "Tame", "Clinica Natali", "Calasanz", "Ciudad Alegria"));
-        rutas.add(new Ruta("Parque Polideportivo", "Rosales", "Colegio Beatriz Cueva de Ayora", "Hipervalle", "Jose A. Eguiguren"));
-        rutas.add(new Ruta("Pradera", "Parque Infantil", "Urna", "Estadio", "Redondel del Soldado"));
+        String[] todosLosBarrios = Paradas.inicializarBarrios();
+        Random random = new Random();
 
-        boolean op = true;
-        do {
-            System.out.println("----- BIENVENIDO AL SISTEMA DE BUSES UTPL -----");
-            System.out.println("-------------- Que desea hacer? --------------");
-            System.out.println("1. Ver paradas");
-            System.out.println("2. Ver rutas de entrada");
-            System.out.println("3. Ver rutas de salida");
+        for (int i = 0; i < 5; i++) {
+            ArrayList<String> paradasUnicas = new ArrayList<>();
+            while (paradasUnicas.size() < 5) {
+                String nombre = todosLosBarrios[random.nextInt(todosLosBarrios.length)];
+                if (!paradasUnicas.contains(nombre)) {
+                    paradasUnicas.add(nombre);
+                }
+            }
+            ArrayList<Parada> paradasRuta = new ArrayList<>();
+            for (String nombre : paradasUnicas) {
+                paradasRuta.add(new Parada(nombre));
+            }
+            paradasRuta.add(new Parada("UTPL"));
+            rutasEntrada.add(new Ruta(i + 1, paradasRuta));
+        }
+
+        boolean continuar = true;
+        while (continuar) {
+            System.out.println("\n--- SISTEMA DE GESTION DE BUSES UTPL ---");
+            System.out.println("1. Ver rutas de entrada");
+            System.out.println("2. Ver rutas de salida");
+            System.out.println("3. Evento aleatorio (reduccion de parada o tiempo)");
+            System.out.println("4. Salir");
             System.out.print("Seleccione una opcion: ");
-            int pe = tcl.nextInt();
+            int opcion = scanner.nextInt();
 
-            switch (pe) {
+            switch (opcion) {
                 case 1:
-                    System.out.println("Mostrando todas las paradas disponibles...");
-                    String[] barrios = Paradas.inicializarBarrios();
-                    Paradas.mostrarBarrios(barrios);
+                    mostrarRutas(rutasEntrada);
+                    consultarTiempo(scanner, rutasEntrada, true);
                     break;
-
                 case 2:
-                    System.out.println("Mostrando rutas de entrada...");
-                    for (int i = 0; i < rutas.size(); i++) {
-                        Ruta r = rutas.get(i);
-                        System.out.println("Ruta " + (i + 1) + ":");
-                        for (String parada : r.getRuta()) {
-                            System.out.println("  - " + parada);
-                        }
-                    }
-
-                    System.out.print("Desea calcular el tiempo desde una parada especifica? (s/n): ");
-                    char calcEntrada = tcl.next().charAt(0);
-                    if (calcEntrada == 's' || calcEntrada == 'S') {
-                        System.out.print("Seleccione el numero de ruta: ");
-                        int rutaIndex = tcl.nextInt() - 1;
-
-                        if (rutaIndex >= 0 && rutaIndex < rutas.size()) {
-                            String[] r = rutas.get(rutaIndex).getRuta();
-                            RutasEntrada entrada = new RutasEntrada(r[0], r[1], r[2], r[3], r[4]);
-                            entrada.tiempoDeViaje();
-                        } else {
-                            System.out.println("Numero de ruta inválido.");
-                        }
-                    }
+                    mostrarRutasSalida(rutasEntrada);
+                    consultarTiempo(scanner, rutasEntrada, false);
                     break;
-
                 case 3:
-                    System.out.println("Mostrando rutas de salida...");
-                    int x = 1;
-                    for (int i = 0 ; i < rutas.size(); i++) {
-                        Ruta r = rutas.get(i);
-                        System.out.println("Ruta " + (x) + ":");
-
-                        String[] paradas = r.getRuta();
-                        x++;
-                        for (int j = paradas.length - 1; j >= 0; j--) {
-                            System.out.println("  - " + paradas[j]);
-                        }
-                    }
-
-                    System.out.print("Desea calcular el tiempo hacia una parada especifica? (s/n): ");
-                    char calcSalida = tcl.next().charAt(0);
-                    if (calcSalida == 's' || calcSalida == 'S') {
-                        System.out.print("Seleccione el numero de ruta: ");
-                        int rutaIndex = tcl.nextInt() - 1;
-
-                        if (rutaIndex >= 0 && rutaIndex < rutas.size()) {
-                            String[] r = rutas.get(rutaIndex).getRuta();
-                            RutasSalida salida = new RutasSalida(r[0], r[1], r[2], r[3], r[4]);
-                            salida.tiempoDeViaje();
-                        } else {
-                            System.out.println("Numero de ruta inválido.");
-                        }
-                    }
+                    eventoAleatorio(rutasEntrada);
                     break;
-
+                case 4:
+                    continuar = false;
+                    break;
                 default:
-                    System.out.println("Opcion no válida. Intente de nuevo.");
-                    break;
+                    System.out.println("Opcion invalida.");
+            }
+        }
+    }
+
+    private static void mostrarRutas(ArrayList<Ruta> rutas) {
+        for (Ruta ruta : rutas) {
+            System.out.println("Ruta " + ruta.getNumeroRuta() + ":");
+            for (Parada p : ruta.getParadas()) {
+                System.out.println("  - " + p.getNombre());
+            }
+        }
+    }
+
+    private static void mostrarRutasSalida(ArrayList<Ruta> rutas) {
+        for (Ruta ruta : rutas) {
+            System.out.println("Ruta " + ruta.getNumeroRuta() + " (salida):");
+            List<Parada> inversa = new ArrayList<>(ruta.getParadas());
+            Collections.reverse(inversa);
+            for (Parada p : inversa) {
+                System.out.println("  - " + p.getNombre());
+            }
+        }
+    }
+
+    private static void consultarTiempo(Scanner scanner, ArrayList<Ruta> rutas, boolean entrada) {
+        System.out.print("Seleccione numero de ruta: ");
+        int index = scanner.nextInt() - 1;
+        if (index >= 0 && index < rutas.size()) {
+            Ruta ruta = rutas.get(index);
+            List<Parada> paradas = entrada ? ruta.getParadas() : new ArrayList<>(ruta.getParadas());
+            if (!entrada) {
+                Collections.reverse(paradas);
             }
 
-            System.out.print("Desea realizar otra operacion? (s/n): ");
-            char continuar = tcl.next().charAt(0);
-            if (continuar == 'n' || continuar == 'N') {
-                op = false;
+            System.out.println("Paradas:");
+            for (int i = 0; i < paradas.size(); i++) {
+                System.out.println((i + 1) + ") " + paradas.get(i).getNombre());
             }
 
-        } while (op);
+            System.out.print("Seleccione parada de inicio: ");
+            int paradaInicio = scanner.nextInt();
+            if (paradaInicio >= 1 && paradaInicio <= paradas.size()) {
+                int tiempo = (paradas.size() - paradaInicio) * 5;
+                System.out.println("Tiempo estimado: " + tiempo + " minutos");
+                System.out.println("Recorrido:");
+                for (int i = paradaInicio - 1; i < paradas.size(); i++) {
+                    System.out.println("  - " + paradas.get(i).getNombre());
+                }
+            } else {
+                System.out.println("Parada invalida");
+            }
+        } else {
+            System.out.println("Ruta invalida");
+        }
+    }
+
+    private static void eventoAleatorio(ArrayList<Ruta> rutas) {
+        Random rand = new Random();
+        int index = rand.nextInt(rutas.size());
+        Ruta ruta = rutas.get(index);
+        ArrayList<Parada> paradas = new ArrayList<>(ruta.getParadas());
+
+        int tipoEvento = rand.nextInt(2);
+
+        System.out.println("\nEvento aleatorio en Ruta " + ruta.getNumeroRuta() + "!");
+
+        if (tipoEvento == 0 && paradas.size() > 2) {
+            int eliminar = rand.nextInt(paradas.size() - 1); // evitar eliminar UTPL
+            Parada removida = paradas.remove(eliminar);
+            System.out.println("Evento: Menos trafico. Se omite la parada " + removida.getNombre());
+        } else {
+            System.out.println("Evento: El bus tomo un atajo. Se reducen 10 minutos del tiempo total.");
+        }
+
+        System.out.println("Ruta resultante:");
+        for (Parada p : paradas) {
+            System.out.println("  - " + p.getNombre());
+        }
+
+        int nuevoTiempo = (paradas.size() - 1) * 5;
+        if (tipoEvento == 1) {
+            nuevoTiempo = Math.max(0, nuevoTiempo - 10);
+        }
+
+        System.out.println("Nuevo tiempo estimado: " + nuevoTiempo + " minutos\n");
     }
 }

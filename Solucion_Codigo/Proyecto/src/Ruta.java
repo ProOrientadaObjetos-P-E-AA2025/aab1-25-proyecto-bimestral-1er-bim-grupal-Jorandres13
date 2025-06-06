@@ -1,23 +1,21 @@
 
+import java.util.ArrayList;
+
 public class Ruta {
 
-    String parada1;
-    String parada2;
-    String parada3;
-    String parada4;
-    String parada5;
-    String UTPL;
+    private int numeroRuta;
+    private ArrayList<Parada> paradas;
 
-    public Ruta(String parada1, String parada2, String parada3, String parada4, String parada5) {
-        this.parada1 = parada1;
-        this.parada2 = parada2;
-        this.parada3 = parada3;
-        this.parada4 = parada4;
-        this.parada5 = parada5;
-        this.UTPL = "UTPL";
+    public Ruta(int numeroRuta, ArrayList<Parada> paradas) {
+        this.numeroRuta = numeroRuta;
+        this.paradas = paradas;
     }
 
-    public String[] getRuta() {
-        return new String[]{parada1, parada2, parada3, parada4, parada5, UTPL};       
-    }    
+    public int getNumeroRuta() {
+        return numeroRuta;
+    }
+
+    public ArrayList<Parada> getParadas() {
+        return paradas;
+    }
 }
